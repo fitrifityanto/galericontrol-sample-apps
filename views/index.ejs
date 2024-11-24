@@ -1,0 +1,15 @@
+<div class="w-[90vw] mx-auto">
+    <div class="flex justify-center h-24">
+        <h1 class="text-3xl"><%= title %></h1>
+    </div>
+    
+    <% if (!photos.length) { %>
+        <div>galeri kosong</div>
+        <% }  %>
+        <% photos.forEach(photo => {   %>
+        <div class="flex flex-col gap-2 mb-4">
+            <div><p class="text-2xl"><%= photo.judul %></p></div>
+            <div class="w-52"><img src="img/galeri/<%= photo.gambar %>" alt="<%= photo.gambar %>" class="aspect-square object-cover"></div>
+        </div>
+        <% })  %>
+</div>
