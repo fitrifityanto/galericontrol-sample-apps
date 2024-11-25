@@ -12,4 +12,19 @@ const loadGaleri = async () => {
     }
 }
 
-export { loadGaleri }
+// menambahkan data contact baru
+const addGaleri = async (galeri) => {
+    try {
+       const response = await axios.post(process.env.API_URL, {
+        judul: galeri.judul,
+        gambar: galeri.gambar,
+    })
+        return response.data
+       
+    } catch (error) {
+        console.error('Error fetching photos:', error) 
+        return []   
+    }
+}
+
+export { loadGaleri, addGaleri }

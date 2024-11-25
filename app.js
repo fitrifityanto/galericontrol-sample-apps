@@ -1,6 +1,6 @@
 import express from 'express';
 import expressLayouts from 'express-ejs-layouts';
-import { loadGaleri } from './utils/galeries.js';
+import { loadGaleri, addGaleri } from './utils/galeries.js';
 import { body, validationResult } from 'express-validator';
 import session from 'express-session';
 import flash from 'connect-flash';
@@ -31,11 +31,12 @@ app.use(flash());
 
 app.get('/', async (req, res) => {
    const photos = await loadGaleri()
+   const latestPhotos = photos.slice(0,5)
    res.render('index', { 
      author: 'fitriningtyas', 
      title: 'galeri-foto-app',
      layout: 'layouts/main-layout',
-     photos
+     photos: latestPhotos
    })
 })
 
@@ -45,6 +46,41 @@ app.get('/about', (req, res) => {
     title: 'halaman About', 
   })
   })
+
+  app.get('/galeri', async (req, res) => {
+    const photos = await loadGaleri()
+    res.render('galeri', { 
+      title: 'galeri',
+      layout: 'layouts/main-layout',
+      photos
+    })
+ })
+
+  // halaman form tambah data galeri
+app.get('/galeri/add', (req, res) => {
+  res.render('add-galeri', {
+    title: 'Form tambah data galeri',
+    layout: 'layouts/main-layout',
+    msg: req.flash('msg')
+  })
+})
+
+app.post('/', body('gambar').notEmpty().withMessage('tidak boleh kosong') , async (req, res) => {
+  const result = validationResult(req)
+  if(!result.isEmpty()) { 
+    res.render('add-galeri', {
+    title: 'Form tambah data galeri',
+    layout: 'layouts/main-layout',
+    errors: result.array()
+  })
+  return;
+  // res.status(400).json({ errors: result.array() })
+  }
+  const response = await addGaleri(req.body)
+  req.flash('msg',` ${response.message}`)
+  // console.log(response.message)
+  res.redirect('/galeri/add')
+})
 
 
 app.use('/', (req, res) => {
