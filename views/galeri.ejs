@@ -2,14 +2,35 @@
     <div class="flex justify-center h-24">
         <h1 class="text-3xl"><%= title %></h1>
     </div>
+    <!-- flash message -->
+    <% if (msg && msg.length > 0) { %>
+        <div class="bg-green-200 my-3 py-4 px-3 border border-green-400">
+          <p><%= msg[0] %></p> <!-- msg[0] karena msg adalah array -->
+        </div>
+      <% } %>
     <div class="mb-4"><a href="/galeri/add" class="px-4 py-2 rounded-lg bg-blue-200 border-2 border-blue-500">Tambah gambar</a> </div>
     <% if (!photos.length) { %>
         <div>galeri kosong</div>
         <% }  %>
-        <% photos.forEach(photo => {   %>
-        <div class="flex flex-col gap-2 mb-4">
-            <div><p class="text-2xl"><%= photo.judul %></p></div>
-            <div class="w-52"><img src="img/galeri/<%= photo.gambar %>" alt="<%= photo.gambar %>" class="aspect-square object-cover"></div>
-        </div>
-        <% })  %>
+        <div>Total: <%= photos.length %> </div>
+        <table class="border-collapse border border-slate-400">
+            <thead>
+               <tr class="bg-slate-200">
+                   <th class="p-2 border border-slate-400">Judul</th>
+                   <th class="p-2 border border-slate-400">nama file gambar</th>
+                   <th colspan="2" class="p-2"></th>
+               </tr>
+            </thead>
+            <tbody>
+
+                <% photos.forEach(photo => {   %>
+                <tr class="border border-slate-400">
+                    <td class="border border-slate-400"><p class="text-lg"><%= photo.judul %></p></td>
+                    <td class="border border-slate-400"><p class="text-lg"><%= photo.gambar %></p></td>
+                    <td><a href="">Edit</a></td>
+                    <td><a href="/galeri/delete/<%= photo.id %>" onclick="return confirm('yakin?')">Hapus</a></td>
+                </tr>
+                <% })  %>
+            </tbody>
+        </table>
 </div>

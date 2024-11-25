@@ -1,6 +1,6 @@
 import express from 'express';
 import expressLayouts from 'express-ejs-layouts';
-import { loadGaleri, addGaleri } from './utils/galeries.js';
+import { loadGaleri, addGaleri, deleteGaleri} from './utils/galeries.js';
 import { body, validationResult } from 'express-validator';
 import session from 'express-session';
 import flash from 'connect-flash';
@@ -33,7 +33,7 @@ app.get('/', async (req, res) => {
    const photos = await loadGaleri()
    const latestPhotos = photos.slice(0,5)
    res.render('index', { 
-     author: 'fitriningtyas', 
+     name: 'fitriningtyas', 
      title: 'galeri-foto-app',
      layout: 'layouts/main-layout',
      photos: latestPhotos
@@ -52,7 +52,8 @@ app.get('/about', (req, res) => {
     res.render('galeri', { 
       title: 'galeri',
       layout: 'layouts/main-layout',
-      photos
+      photos,
+      msg: req.flash('msg')
     })
  })
 
@@ -63,6 +64,12 @@ app.get('/galeri/add', (req, res) => {
     layout: 'layouts/main-layout',
     msg: req.flash('msg')
   })
+})
+
+app.get('/galeri/delete/:id', async(req, res) => {
+ const response = await deleteGaleri(req.params.id)
+  req.flash('msg',` ${response.message}`)
+  res.redirect('/galeri')
 })
 
 app.post('/', body('gambar').notEmpty().withMessage('tidak boleh kosong') , async (req, res) => {
@@ -81,7 +88,6 @@ app.post('/', body('gambar').notEmpty().withMessage('tidak boleh kosong') , asyn
   // console.log(response.message)
   res.redirect('/galeri/add')
 })
-
 
 app.use('/', (req, res) => {
     res.status(404)

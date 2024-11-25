@@ -4,7 +4,7 @@ dotenv.config();
 
 const loadGaleri = async () => {
     try {      
-        const response =  await axios.get(process.env.API_URL)
+        const response =  await axios.get(`${process.env.API_URL}`)
          return response.data
     } catch (error) {
         console.error('Error fetching photos:', error) 
@@ -15,7 +15,7 @@ const loadGaleri = async () => {
 // menambahkan data contact baru
 const addGaleri = async (galeri) => {
     try {
-       const response = await axios.post(process.env.API_URL, {
+       const response = await axios.post(`${process.env.API_URL}`, {
         judul: galeri.judul,
         gambar: galeri.gambar,
     })
@@ -27,4 +27,14 @@ const addGaleri = async (galeri) => {
     }
 }
 
-export { loadGaleri, addGaleri }
+const deleteGaleri = async (id) => {
+    try {      
+        const response =  await axios.delete(`${process.env.API_URL}/${id}`)
+         return response.data
+    } catch (error) {
+        console.error('Error fetching photos:', error) 
+        return []   
+    }
+}
+
+export { loadGaleri, addGaleri, deleteGaleri }
