@@ -1,6 +1,7 @@
 import express from 'express';
 import { loadGaleri, addGaleri, deleteGaleri} from './utils/galeries.js';
-import { body, validationResult } from 'express-validator';
+import { validationResult } from 'express-validator';
+import multer from 'multer';
 
 export const router = express.Router()
 
@@ -31,6 +32,18 @@ router.get('/galeri', async (req, res) => {
         msg: req.flash('msg')
     })
 })
+
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, 'public/img/galeri')
+    },
+    filename: (req, file, cb) => {
+        const filename = Date.now() + '-' + file.originalname
+        cb(null, filename)
+    }
+})
+
+const upload = multer({ storage })
  
 // halaman form tambah data galeri
 router.get('/galeri/add', (req, res) => {
@@ -47,7 +60,7 @@ router.get('/galeri/delete/:id', async(req, res) => {
     res.redirect('/galeri')
 })
  
-router.post('/', body('gambar').notEmpty().withMessage('tidak boleh kosong') , async (req, res) => {
+router.post('/', upload.single('gambar') , async (req, res) => {
     const result = validationResult(req)
     if(!result.isEmpty()) { 
         res.render('add-galeri', {
@@ -56,10 +69,21 @@ router.post('/', body('gambar').notEmpty().withMessage('tidak boleh kosong') , a
         errors: result.array()
     })
     return;
-    // res.status(400).json({ errors: result.array() })
     }
-    const response = await addGaleri(req.body)
-    req.flash('msg',` ${response.message}`)
+    if (req.file) {
+        // Ambil nama file gambar setelah upload
+        const gambar = req.file.filename;
+    
+        // Panggil fungsi untuk menambahkan data galeri baru ke API
+        const response = await addGaleri({
+          judul: req.body.judul,
+          gambar: gambar, // Hanya nama file yang disimpan
+        });
+        console.log('berhasil')
+        req.flash('msg', `${response.message}`);
+      } else {
+        req.flash('msg', 'Gambar tidak berhasil diupload');
+      }
     res.redirect('/galeri/add')
 })
  
