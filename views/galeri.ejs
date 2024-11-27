@@ -16,7 +16,7 @@
         <table class="border-collapse border border-slate-400">
             <thead>
                <tr class="bg-slate-200">
-                   <th class="p-2 border border-slate-400">Judul</th>
+                   <th class="p-2 border border-slate-400"> Judul</th>
                    <th class="p-2 border border-slate-400">nama file gambar</th>
                    <th colspan="2" class="p-2"></th>
                </tr>
@@ -25,10 +25,12 @@
 
                 <% photos.forEach(photo => {   %>
                 <tr class="border border-slate-400">
-                    <td class="border border-slate-400"><p class="text-lg"><%= photo.judul %></p></td>
+                    <td class="border border-slate-400"><p class="text-lg"><a href="/galeri/<%= photo.id %>"><%= photo.judul %></p></a></td>
                     <td class="border border-slate-400"><p class="text-lg"><%= photo.gambar %></p></td>
                     <td><a href="">Edit</a></td>
-                    <td><a href="/galeri/delete/<%= photo.id %>" onclick="return confirm('yakin?')">Hapus</a></td>
+                    <td>
+                        <a href="/galeri/delete/<%= photo.id %>" onclick="return confirm('yakin?')">Hapus</a>
+                    </td>
                 </tr>
                 <% })  %>
             </tbody>

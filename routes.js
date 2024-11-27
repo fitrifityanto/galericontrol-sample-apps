@@ -1,6 +1,7 @@
 import express from 'express';
-import { loadGaleri, addGaleri, deleteGaleri} from './utils/galeries.js';
-import { validationResult } from 'express-validator';
+import { loadGaleri, addGaleri, deleteGaleri, loadGaleriById} from './utils/galeries.js';
+import { body, validationResult } from 'express-validator';
+import fs from 'fs';
 import multer from 'multer';
 
 export const router = express.Router()
@@ -33,57 +34,118 @@ router.get('/galeri', async (req, res) => {
     })
 })
 
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, 'public/img/galeri')
-    },
-    filename: (req, file, cb) => {
-        const filename = Date.now() + '-' + file.originalname
-        cb(null, filename)
-    }
-})
-
-const upload = multer({ storage })
- 
 // halaman form tambah data galeri
 router.get('/galeri/add', (req, res) => {
-res.render('add-galeri', {
-    title: 'Form tambah data galeri',
-    layout: 'layouts/main-layout',
-    msg: req.flash('msg')
-})
-})
- 
-router.get('/galeri/delete/:id', async(req, res) => {
-    const response = await deleteGaleri(req.params.id)
-    req.flash('msg',` ${response.message}`)
-    res.redirect('/galeri')
-})
- 
-router.post('/', upload.single('gambar') , async (req, res) => {
-    const result = validationResult(req)
-    if(!result.isEmpty()) { 
-        res.render('add-galeri', {
+    res.render('add-galeri', {
         title: 'Form tambah data galeri',
         layout: 'layouts/main-layout',
-        errors: result.array()
+        msg: req.flash('msg')
     })
-    return;
-    }
-    if (req.file) {
-        // Ambil nama file gambar setelah upload
-        const gambar = req.file.filename;
+    })
+
+
+    const storage = multer.diskStorage({
+        destination: (req, file, cb) => {
+            cb(null, 'public/img/galeri')
+        },
+        filename: (req, file, cb) => {
+            const filename = Date.now() + '-' + file.originalname
+            cb(null, filename)
+        }
+    })
+
+    // const fileFilter = (req, file, cb) => {
+    //     // Cek jika file ada
+    //     if (!file) {
+    //       cb(new Error('No file selected!'), false); // Kirim error jika file tidak ada
+    //       return;
+    //     }
+    // }
     
-        // Panggil fungsi untuk menambahkan data galeri baru ke API
-        const response = await addGaleri({
-          judul: req.body.judul,
-          gambar: gambar, // Hanya nama file yang disimpan
-        });
-        console.log('berhasil')
-        req.flash('msg', `${response.message}`);
-      } else {
-        req.flash('msg', 'Gambar tidak berhasil diupload');
-      }
-    res.redirect('/galeri/add')
-})
+    const upload = multer({ storage })
+    
+    router.post('/galeri', upload.single('gambar'), body('judul').notEmpty().withMessage('ngga boleh kosong'), (req, res) => {
+        const errors = validationResult(req);
+        if(!errors.isEmpty()) {
+            console.log(errors.array())
+            if (req.file) {
+                fs.unlink('public/img/galeri/' + req.file.filename , async (err) => {
+                    if(err) {
+                       console.log(err)
+                    } 
+                })
+            }
+            res.render('add-galeri', {
+                title: 'Form tambah data galeri',
+                layout: 'layouts/main-layout',
+                errors: errors.array(),
+                msg: req.flash('msg')
+            })
+        } 
+        if(!req.file) {
+            req.flash('msg', 'gambar tidak boleh kosong');
+            res.redirect('/galeri/add');
+        }
+        else {
+            console.log('Judul:', req.body.judul);
+            console.log('gambar:', req.body.gambar);
+            res.redirect('/galeri')
+        }
+
+        
+        // req.file berisi data file yang di-upload
+        // if (req.file) {
+        //     console.log('File Uploaded:', req.file.filename);  // Nama file yang di-upload
+        // } else {
+        //     console.log('No file uploaded.');
+        // }
+    
+        // res.send('Data galeri diterima!');
+    });
+    // router.post('/', upload.single('gambar'), 
+    //     async (req, res) => {
+    //         const gambar = req.file.filename;
+    
+    //         if (gambar) {
+    //             try {
+    //                 const response = await addGaleri({
+    //                     judul: req.body.judul,
+    //                     gambar
+    //                 });
+    //                 req.flash('msg', `${response.message}`);
+    //                 res.redirect('/galeri/add');
+    //             } catch (error) {
+    //                 req.flash('msg', 'Terjadi kesalahan saat menambah data galeri.');
+    //                 res.redirect('/galeri/add');
+    //             }
+    //         } else {
+    //             req.flash('msg', 'Gambar tidak berhasil diupload');
+    //             res.redirect('/galeri/add');
+    //         }
+    //     }
+    // );
+
+    router.get('/galeri/delete/:id', async (req, res) => {
+        const galeriById = await loadGaleriById(req.params.id)
+        fs.unlink('public/img/galeri/' + galeriById.gambar , async (err) => {
+            if(err) {
+               console.log(err)
+            } 
+            const response = await deleteGaleri(req.params.id)
+            req.flash('msg',` ${response.message}`)
+            res.redirect('/galeri')
+        })
+    })
+
+router.get('/galeri/:id', async (req, res) => {
+    const galeriById = await loadGaleriById(req.params.id)
+    console.log(galeriById)
+    res.json(galeriById)
+    // res.render('add-galeri', {
+    //     title: 'Form tambah data galeri',
+    //     layout: 'layouts/main-layout',
+    //     msg: req.flash('msg')
+    // })
+    })
+
  

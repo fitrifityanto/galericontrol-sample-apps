@@ -1,4 +1,4 @@
-import express, { Router } from 'express';
+import express from 'express';
 import expressLayouts from 'express-ejs-layouts';
 
 import session from 'express-session';
@@ -16,9 +16,10 @@ const PORT = process.env.PORT
 app.set('view engine', 'ejs');
 app.use(expressLayouts);
 
-//  built-in middleware
+app.use(express.json());
+
+app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
-app.use(express.urlencoded({ extended: true }))
 
 // configurasi flash
 app.use(session({
@@ -29,7 +30,8 @@ app.use(session({
   
 app.use(flash());
 
-app.use('/', routes)
+
+app.use(routes);
 
 app.use('/', (req, res) => {
     res.status(404)
