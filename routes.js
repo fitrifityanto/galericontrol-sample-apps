@@ -43,7 +43,8 @@ router.get('/galeri/add', (req, res) => {
     })
     })
 
-
+   
+    
     const storage = multer.diskStorage({
         destination: (req, file, cb) => {
             cb(null, 'public/img/galeri')
@@ -54,54 +55,152 @@ router.get('/galeri/add', (req, res) => {
         }
     })
 
-    // const fileFilter = (req, file, cb) => {
-    //     // Cek jika file ada
-    //     if (!file) {
-    //       cb(new Error('No file selected!'), false); // Kirim error jika file tidak ada
-    //       return;
-    //     }
-    // }
-    
-    const upload = multer({ storage })
-    
-    router.post('/galeri', upload.single('gambar'), body('judul').notEmpty().withMessage('ngga boleh kosong'), (req, res) => {
-        const errors = validationResult(req);
-        if(!errors.isEmpty()) {
-            console.log(errors.array())
-            if (req.file) {
-                fs.unlink('public/img/galeri/' + req.file.filename , async (err) => {
-                    if(err) {
-                       console.log(err)
-                    } 
-                })
-            }
-            res.render('add-galeri', {
-                title: 'Form tambah data galeri',
-                layout: 'layouts/main-layout',
-                errors: errors.array(),
-                msg: req.flash('msg')
-            })
-        } 
-        if(!req.file) {
-            req.flash('msg', 'gambar tidak boleh kosong');
-            res.redirect('/galeri/add');
+    const fileFilter = (req, file, cb) => {
+        const filetypes = /jpeg|jpg/;  // Hanya menerima .jpg dan .jpeg
+        const mimetype = filetypes.test(file.mimetype);
+      
+        if (mimetype) {
+          return cb(null, true);
+        } else {
+          cb(new Error('Hanya file JPG atau JPEG yang diperbolehkan'), false);
         }
-        else {
-            console.log('Judul:', req.body.judul);
-            console.log('gambar:', req.body.gambar);
-            res.redirect('/galeri')
-        }
+      };
+      
+    
+    const upload = multer({ 
+        storage,
+        fileFilter: fileFilter,
+        limits: {
+            fileSize: 200 * 1024, // 200 KB dalam byte
+          }
+     }).single('gambar')
 
-        
-        // req.file berisi data file yang di-upload
-        // if (req.file) {
-        //     console.log('File Uploaded:', req.file.filename);  // Nama file yang di-upload
-        // } else {
-        //     console.log('No file uploaded.');
-        // }
-    
-        // res.send('Data galeri diterima!');
+
+// Route untuk menangani form dan file upload dengan validasi
+router.post(
+    '/galeri',
+    upload,
+    (err, req, res, next) => {
+    if (err instanceof multer.MulterError) {
+        if (err.code === 'LIMIT_FILE_SIZE') {
+        return res.status(400).json({ error: 'File size is too large. Maximum allowed is 200 KB.' });
+        }
+    }
+    if (err) {
+        return res.status(400).json({ error: err.message });
+    }
+    next(); 
+    },
+    body('judul').notEmpty().withMessage('Name is required').isLength({ max: 50 }).withMessage('Name cannot exceed 50 characters'),
+
+    (req, res, next) => {
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
+
+    if (!req.file) {
+        return res.status(400).json({ error: 'Tidak ada file yang dipilih' });
+    }
+
+    if (req.file.mimetype !== 'image/jpeg' && req.file.mimetype !== 'image/jpg') {
+        return res.status(400).json({ error: 'Hanya file JPG atau JPEG yang diperbolehkan' });
+    }
+    next(); 
+    },
+
+    (req, res) => {
+    // Setelah validasi berhasil, lakukan response sukses
+    const formData = {
+        judul: req.body.judul,
+    };
+
+    res.status(200).json({
+        message: 'File dan data form berhasil diupload',
+        file: req.file,
+        formData: formData,
     });
+    }
+);
+
+
+
+// router.post('/galeri', 
+//     (req, res, next) => {
+//         upload(req, res, (err) => {
+//             // Tangani error dari Multer
+//     if (err instanceof multer.MulterError) {
+//         return res.status(400).json({ error: err.message });
+//     } else if (err) {
+//         return res.status(400).json({ error: err.message });
+//     }
+
+//     // Memeriksa apakah file diupload
+//     if (!req.file) {
+//         return res.status(400).json({ error: 'Tidak ada file yang dipilih' });
+//     }
+
+//     const formData = {
+//         judul: req.body.judul,  // Contoh input form teks
+//       };
+  
+//       // Mengembalikan hasil response
+//       res.status(200).json({
+//         message: 'File dan data form berhasil diupload',
+//         file: req.file,  // Informasi file yang diupload
+//         formData: formData,  // Data form selain file
+//       });
+//     })
+//     next()
+//     },
+//     body('judul').notEmpty(), 
+//      (req, res) => {
+//         const errors = validationResult(req);
+//             if (!errors.isEmpty()) {
+//                 // return res.render('add-galeri', {
+//                 //     title: 'Form tambah data galeri',
+//                 //     layout: 'layouts/main-layout',
+//                 //     errors: errors.array(),
+//                 //     // msg: req.flash('msg')
+//                 // })
+//       return res.status(400).json({ errors: errors.array() });
+//     }
+       
+//      }
+//      )
+    
+    // router.post('/galeri', upload, 
+    //     body('judul').notEmpty().withMessage('ngga boleh kosong'), (req, res) => {
+    //     const errors = validationResult(req);
+    //     if(!errors.isEmpty()) {
+    //         console.log(errors.array())
+    //         if (req.file) {
+    //             fs.unlink('public/img/galeri/' + req.file.filename , async (err) => {
+    //                 if(err) {
+    //                    console.log(err)
+    //                 } 
+    //             })
+    //         }
+    //         res.render('add-galeri', {
+    //             title: 'Form tambah data galeri',
+    //             layout: 'layouts/main-layout',
+    //             errors: errors.array(),
+    //             msg: req.flash('msg')
+    //         })
+    //     } 
+    //     // if(!req.file) {
+    //     //     req.flash('msg', 'gambar tidak boleh kosong');
+    //     //     res.redirect('/galeri/add');
+    //     // }
+    //     else {
+
+    //         res.redirect('/galeri')
+    //     }
+    //         console.log('Judul:', req.body.judul);
+    //         console.log('gambar:', req.body.gambar);
+    // });
+
     // router.post('/', upload.single('gambar'), 
     //     async (req, res) => {
     //         const gambar = req.file.filename;
