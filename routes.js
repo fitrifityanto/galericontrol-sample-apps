@@ -3,6 +3,7 @@ import { loadGaleri, addGaleri, deleteGaleri, loadGaleriById} from './utils/gale
 import { body, validationResult } from 'express-validator';
 import fs from 'fs';
 import multer from 'multer';
+import path from 'path';
 
 export const router = express.Router()
 
@@ -51,7 +52,10 @@ const storage = multer.diskStorage({
         cb(null, 'public/img/galeri')
     },
     filename: (req, file, cb) => {
-        const filename = Date.now() + '-' + file.originalname
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
+        const fileExt = path.extname(file.originalname)
+        const baseName = path.basename(file.originalname, fileExt).replace(/\s+/g, '').toLowerCase()
+        const filename = file.fieldname + '-' + baseName + '-' + uniqueSuffix + fileExt
         cb(null, filename)
     }
 })
@@ -148,7 +152,13 @@ router.post(
     }
 );
 
-router.get('/galeri/delete/:id', async (req, res) => {
+router.get('/galeri/:id', async (req, res) => {
+    const galeriById = await loadGaleriById(req.params.id)
+    console.log(galeriById)
+    res.json(galeriById)
+    })
+
+router.delete('/galeri/:id', async (req, res) => {
     const galeriById = await loadGaleriById(req.params.id)
     fs.unlink('public/img/galeri/' + galeriById.gambar , async (err) => {
         if(err) {
@@ -159,11 +169,5 @@ router.get('/galeri/delete/:id', async (req, res) => {
         res.redirect('/galeri')
     })
 })
-
-router.get('/galeri/:id', async (req, res) => {
-    const galeriById = await loadGaleriById(req.params.id)
-    console.log(galeriById)
-    res.json(galeriById)
-    })
 
  

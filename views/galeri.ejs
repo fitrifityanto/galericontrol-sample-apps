@@ -29,7 +29,7 @@
                     <td class="border border-slate-400"><p class="text-lg"><%= photo.gambar %></p></td>
                     <td><a href="">Edit</a></td>
                     <td>
-                        <a href="/galeri/delete/<%= photo.id %>" onclick="return confirm('yakin?')">Hapus</a>
+                        <a href="/galeri/<%= photo.id %>" onclick="return confirm('yakin?')">Hapus</a>
                     </td>
                 </tr>
                 <% })  %>
