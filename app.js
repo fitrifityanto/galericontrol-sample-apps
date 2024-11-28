@@ -1,6 +1,5 @@
 import express from 'express';
 import expressLayouts from 'express-ejs-layouts';
-
 import session from 'express-session';
 import flash from 'connect-flash';
 import dotenv from 'dotenv';
@@ -31,7 +30,6 @@ app.use(session({
 }));
   
 app.use(flash());
-
 
 app.use(routes);
 
