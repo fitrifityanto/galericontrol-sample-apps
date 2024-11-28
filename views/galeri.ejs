@@ -2,12 +2,6 @@
     <div class="flex justify-center h-24">
         <h1 class="text-3xl"><%= title %></h1>
     </div>
-    <!-- flash message -->
-    <% if (msg && msg.length > 0) { %>
-        <div class="bg-green-200 my-3 py-4 px-3 border border-green-400">
-          <p><%= msg[0] %></p> <!-- msg[0] karena msg adalah array -->
-        </div>
-      <% } %>
     <div class="mb-4"><a href="/galeri/add" class="px-4 py-2 rounded-lg bg-blue-200 border-2 border-blue-500">Tambah gambar</a> </div>
     <% if (!photos.length) { %>
         <div>galeri kosong</div>
@@ -29,7 +23,9 @@
                     <td class="border border-slate-400"><p class="text-lg"><%= photo.gambar %></p></td>
                     <td><a href="">Edit</a></td>
                     <td>
-                        <a href="/galeri/<%= photo.id %>" onclick="return confirm('yakin?')">Hapus</a>
+                        <form action="/galeri/<%= photo.id %>?_method=DELETE" method="post" >
+                            <button type="submit" onclick="return confirm('yakin?')">Hapus</button>
+                        </form>
                     </td>
                 </tr>
                 <% })  %>

@@ -5,6 +5,7 @@ import fs from 'fs';
 import multer from 'multer';
 import path from 'path';
 
+
 export const router = express.Router()
 
 router.get('/', async (req, res) => {
@@ -30,8 +31,7 @@ router.get('/galeri', async (req, res) => {
     res.render('galeri', { 
         title: 'galeri',
         layout: 'layouts/main-layout',
-        photos,
-        msg: req.flash('msg')
+        photos
     })
 })
 
@@ -43,7 +43,7 @@ router.get('/galeri/add', (req, res) => {
         msg: req.flash('msg'),
         msgError: req.flash('msgError'),
     })
-    })
+})
 
    
 // ------ konfigurasi multer untuk upload file

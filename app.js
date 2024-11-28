@@ -5,21 +5,23 @@ import session from 'express-session';
 import flash from 'connect-flash';
 import dotenv from 'dotenv';
 import { router as routes } from './routes.js'
-
+import methodOverride from 'method-override';
 
 dotenv.config();
 
 const app = express()
 const PORT = process.env.PORT
 
+app.use(methodOverride('_method'));
+
 // gunakan EJS
 app.set('view engine', 'ejs');
 app.use(expressLayouts);
 
 app.use(express.json());
-
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
+
 
 // configurasi flash
 app.use(session({
