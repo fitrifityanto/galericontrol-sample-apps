@@ -61,4 +61,15 @@ const deleteGaleri = async (id) => {
     }
 }
 
-export { loadGaleri, loadGaleriById, addGaleri, deleteGaleri, updateGaleri }
+
+const deleteAllGaleri = async () => {
+    try {      
+        const response =  await axios.delete(`${process.env.API_URL}`)
+         return response.data
+    } catch (error) {
+        console.error('Error fetching photos:', response.data.message) 
+        return []   
+    }
+}
+
+export { loadGaleri, loadGaleriById, addGaleri, deleteGaleri, updateGaleri, deleteAllGaleri }

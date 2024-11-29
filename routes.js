@@ -2,7 +2,7 @@ import express from 'express';
 import { body, validationResult } from 'express-validator';
 import fs from 'fs';
 import multer from 'multer';
-import { loadGaleri, addGaleri, deleteGaleri, loadGaleriById, updateGaleri} from './utils/galeries.js';
+import { loadGaleri, addGaleri, deleteGaleri, loadGaleriById, updateGaleri, deleteAllGaleri} from './utils/galeries.js';
 import { upload } from './config/multerConfig.js';
 
 
@@ -31,7 +31,8 @@ router.get('/galeri', async (req, res) => {
     res.render('galeri', { 
         title: 'galeri',
         layout: 'layouts/main-layout',
-        galeries
+        galeries,
+        msgSucces: req.flash('msgSucces'),
     })
 })
 
@@ -220,16 +221,27 @@ router.get('/galeri/:id', async (req, res) => {
     })
     })
 
+    // menghapus semua data galeri
+router.delete('/galeri', async (req, res) => {
+    const response = await deleteAllGaleri()
+    fs.rm('public/img/galeri', { recursive: true, force: true },  err => {
+        if(err) console.log(err)
+    })
+    req.flash('msgSucces',` ${response.message}`)   
+    res.redirect('/galeri')
+})
+
+    // menghapus 1 data berdasarkan id
 router.delete('/galeri/:id', async (req, res) => {
     const galeriById = await loadGaleriById(req.params.id)
-    fs.unlink('public/img/galeri/' + galeriById.gambar , async (err) => {
+    fs.unlink('public/img/galeri/' + galeriById.gambar , (err) => {
         if(err) {
             console.log(err)
         } 
-        const response = await deleteGaleri(req.params.id)
-        req.flash('msg',` ${response.message}`)
-        res.redirect('/galeri')
     })
+    const response = await deleteGaleri(req.params.id)
+    req.flash('msg',` ${response.message}`)
+    res.redirect('/galeri')
 })
 
  

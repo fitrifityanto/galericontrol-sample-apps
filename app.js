@@ -7,6 +7,7 @@ import { router as routes } from './routes.js'
 import methodOverride from 'method-override';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import fs from 'fs';
 
 dotenv.config();
 
@@ -39,6 +40,8 @@ app.use(session({
 app.use(flash());
 
 app.use(routes);
+
+
 
 app.use('/', (req, res) => {
     res.status(404)
