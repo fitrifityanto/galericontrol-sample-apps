@@ -240,7 +240,7 @@ router.delete('/galeri/:id', async (req, res) => {
         } 
     })
     const response = await deleteGaleri(req.params.id)
-    req.flash('msg',` ${response.message}`)
+    req.flash('msgSucces',` ${response.message}`)
     res.redirect('/galeri')
 })
 
