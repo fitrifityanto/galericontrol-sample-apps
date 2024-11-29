@@ -10,7 +10,7 @@ export const router = express.Router()
 
 router.get('/', async (req, res) => {
     const galeries = await loadGaleri()
-    const latestGaleries = galeries.slice(0,5)
+    const latestGaleries = galeries.slice(0,6)
     res.render('index', { 
       name: 'fitriningtyas', 
       title: 'galeri-foto-app',
@@ -76,7 +76,7 @@ router.post(
         // return res.status(400).json({ errors: errors.array() });
         // karena file berhasil upload, harus di hapus
         if(req.file) {
-            fs.unlink('public/img/galeri/' + req.file.filename , async (err) => {
+            fs.unlink('public/img/galeri/data' + req.file.filename , async (err) => {
                 if(err) {
                     console.log(err)
                 } 
@@ -224,7 +224,7 @@ router.get('/galeri/:id', async (req, res) => {
     // menghapus semua data galeri
 router.delete('/galeri', async (req, res) => {
     const response = await deleteAllGaleri()
-    fs.rm('public/img/galeri', { recursive: true, force: true },  err => {
+    fs.rm('public/img/galeri/data', { recursive: true, force: true },  err => {
         if(err) console.log(err)
     })
     req.flash('msgSucces',` ${response.message}`)   
@@ -234,7 +234,7 @@ router.delete('/galeri', async (req, res) => {
     // menghapus 1 data berdasarkan id
 router.delete('/galeri/:id', async (req, res) => {
     const galeriById = await loadGaleriById(req.params.id)
-    fs.unlink('public/img/galeri/' + galeriById.gambar , (err) => {
+    fs.unlink('public/img/galeri/data' + galeriById.gambar , (err) => {
         if(err) {
             console.log(err)
         } 
