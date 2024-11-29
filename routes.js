@@ -9,13 +9,13 @@ import { upload } from './config/multerConfig.js';
 export const router = express.Router()
 
 router.get('/', async (req, res) => {
-    const photos = await loadGaleri()
-    const latestPhotos = photos.slice(0,5)
+    const galeries = await loadGaleri()
+    const latestGaleries = galeries.slice(0,5)
     res.render('index', { 
       name: 'fitriningtyas', 
       title: 'galeri-foto-app',
       layout: 'layouts/main-layout',
-      photos: latestPhotos
+      galeries: latestGaleries
     })
  })
  
@@ -27,11 +27,11 @@ router.get('/about', (req, res) => {
 })
  
 router.get('/galeri', async (req, res) => {
-    const photos = await loadGaleri()
+    const galeries = await loadGaleri()
     res.render('galeri', { 
         title: 'galeri',
         layout: 'layouts/main-layout',
-        photos
+        galeries
     })
 })
 
@@ -101,11 +101,11 @@ router.post(
 
     async (req, res) => {
     // Setelah validasi berhasil, 
-    const formData = {
+    const galeri = {
         judul: req.body.judul,
         gambar: req.file.filename
     };
-    const response = await addGaleri(formData)
+    const response = await addGaleri(galeri)
     req.flash('msg', `${response.message}`);
     res.redirect('/galeri/add');
     return
@@ -138,14 +138,14 @@ router.put(
         if (err.code === 'LIMIT_FILE_SIZE') {
         // return res.status(400).json({ error: 'File size is too large. Maximum allowed is 200 KB.' });
         req.flash('msgError', 'File gambar terlalu besar, maksimal 200kb');
-        res.redirect('/galeri/edit');
+        res.redirect(`/galeri/edit/${req.body.id}`);
         return
         }
     }
     if (err) {
         // return res.status(400).json({ error: err.message });
         req.flash('msgError', `${err.message}`);
-        res.redirect('/galeri/edit');
+        res.redirect(`/galeri/edit/${req.body.id}`);
         return
     }
     next(); 
@@ -154,10 +154,14 @@ router.put(
 
     (req, res, next) => {
     const errors = validationResult(req);
-
+    const galeri = {
+        id: req.body.id,
+        judul: req.body.judul,
+        gambar: req.body.oldGambar
+    };
     if (!errors.isEmpty()) {
         // return res.status(400).json({ errors: errors.array() });
-        // karena file berhasil diupload, harus di hapus
+        // meskipun ada error pada field selain file, tapi karena file berhasil diupload, harus di hapus
         if(req.file) {
             fs.unlink('public/img/galeri/' + req.file.filename , async (err) => {
                 if(err) {
@@ -167,8 +171,9 @@ router.put(
         }
 
         return res.render('edit-galeri', {
-            title: 'Form tambah data galeri',
+            title: 'Form ubah data galeri',
             layout: 'layouts/main-layout',
+            galeri,
             errors: errors.array(),
             msg: req.flash('msg'),
             msgError: req.flash('msgError'),
@@ -188,13 +193,13 @@ router.put(
             })
         }
         const gambar = req.file ? req.file.filename : req.body.oldGambar
-        const formData = {
+        const galeri = {
             id: req.body.id,
             judul: req.body.judul,
             gambar,
         };
-        const response = await updateGaleri(formData)
-        // req.flash('msg', `${response.message}`);
+        const response = await updateGaleri(galeri)
+        req.flash('msg', `${response.message}`);
         res.redirect(`/galeri/${req.body.id}`);
         return
         // return res.status(200).json({
@@ -206,9 +211,13 @@ router.put(
 );
 
 router.get('/galeri/:id', async (req, res) => {
-    const galeriById = await loadGaleriById(req.params.id)
-    // console.log(galeriById)
-    res.json(galeriById)
+    const galeri = await loadGaleriById(req.params.id)
+    res.render('detail-galeri', {
+        title: 'Detail galeri',
+        layout: 'layouts/main-layout',
+        galeri,
+        msg: req.flash('msg'),
+    })
     })
 
 router.delete('/galeri/:id', async (req, res) => {

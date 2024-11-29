@@ -3,10 +3,10 @@
         <h1 class="text-3xl"><%= title %></h1>
     </div>
     <div class="mb-4"><a href="/galeri/add" class="px-4 py-2 rounded-lg bg-blue-200 border-2 border-blue-500">Tambah gambar</a> </div>
-    <% if (!photos.length) { %>
+    <% if (!galeries.length) { %>
         <div>galeri kosong</div>
         <% }  %>
-        <div>Total: <%= photos.length %> </div>
+        <div>Total: <%= galeries.length %> </div>
         <table class="border-collapse border border-slate-400">
             <thead>
                <tr class="bg-slate-200">
@@ -17,16 +17,16 @@
             </thead>
             <tbody>
 
-                <% photos.forEach(photo => {   %>
+                <% galeries.forEach(galeri => {   %>
                 <tr class="border border-slate-400">
-                    <td class="border border-slate-400"><p class="text-lg"><a href="/galeri/<%= photo.id %>"><%= photo.judul %></p></a></td>
-                    <!-- <td class="border border-slate-400"><p class="text-lg"> <%= photo.gambar %></p></td> -->
-                    <td class="border border-slate-400"><p class="text-lg"><a href="img/galeri/<%= photo.gambar %>"><%= photo.gambar %></a> </p></td>
+                    <td class="border border-slate-400"><p class="text-lg"><a href="/galeri/<%= galeri.id %>"><%= galeri.judul %></p></a></td>
+                    <!-- <td class="border border-slate-400"><p class="text-lg"> <%= galeri.gambar %></p></td> -->
+                    <td class="border border-slate-400"><p class="text-lg"><a href="img/galeri/<%= galeri.gambar %>"><%= galeri.gambar %></a> </p></td>
                     <td>
-                        <a href="/galeri/edit/<%= photo.id %>">Edit</a>
+                        <a href="/galeri/edit/<%= galeri.id %>">Edit</a>
                     </td>
                     <td>
-                        <form action="/galeri/<%= photo.id %>?_method=DELETE" method="post" >
+                        <form action="/galeri/<%= galeri.id %>?_method=DELETE" method="post" >
                             <button type="submit" onclick="return confirm('yakin?')">Hapus</button>
                         </form>
                     </td>
