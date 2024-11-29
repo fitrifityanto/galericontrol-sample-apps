@@ -36,6 +36,21 @@ const addGaleri = async (galeri) => {
     }
 }
 
+const updateGaleri = async (galeri) => {
+    try {
+       const response = await axios.put(`${process.env.API_URL}/${galeri.id}`, {
+        id: galeri.id,
+        judul: galeri.judul,
+        gambar: galeri.gambar,
+    })
+        return response.data
+       
+    } catch (error) {
+        console.error('Error fetching photos:', error) 
+        return []   
+    }
+}
+
 const deleteGaleri = async (id) => {
     try {      
         const response =  await axios.delete(`${process.env.API_URL}/${id}`)
@@ -46,4 +61,4 @@ const deleteGaleri = async (id) => {
     }
 }
 
-export { loadGaleri, loadGaleriById, addGaleri, deleteGaleri }
+export { loadGaleri, loadGaleriById, addGaleri, deleteGaleri, updateGaleri }

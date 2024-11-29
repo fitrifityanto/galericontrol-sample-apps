@@ -20,8 +20,11 @@
                 <% photos.forEach(photo => {   %>
                 <tr class="border border-slate-400">
                     <td class="border border-slate-400"><p class="text-lg"><a href="/galeri/<%= photo.id %>"><%= photo.judul %></p></a></td>
-                    <td class="border border-slate-400"><p class="text-lg"><%= photo.gambar %></p></td>
-                    <td><a href="">Edit</a></td>
+                    <!-- <td class="border border-slate-400"><p class="text-lg"> <%= photo.gambar %></p></td> -->
+                    <td class="border border-slate-400"><p class="text-lg"><a href="img/galeri/<%= photo.gambar %>"><%= photo.gambar %></a> </p></td>
+                    <td>
+                        <a href="/galeri/edit/<%= photo.id %>">Edit</a>
+                    </td>
                     <td>
                         <form action="/galeri/<%= photo.id %>?_method=DELETE" method="post" >
                             <button type="submit" onclick="return confirm('yakin?')">Hapus</button>
