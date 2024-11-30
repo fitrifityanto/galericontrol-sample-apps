@@ -142,9 +142,108 @@ router.get('/galeri/edit/:id', async (req, res) => {
     })
 })
 
+router.get('/galeri/edit2/:id', async (req, res) => {
+    const galeri = await loadGaleriById(req.params.id)
+    // console.log(galeri)
+    res.render('edit2-galeri', {
+        title: 'Form Edit data galeri',
+        layout: 'layouts/main-layout',
+        galeri,
+        msg: req.flash('msg'),
+        msgError: req.flash('msgError'),
+    })
+})
+
 // Route untuk mengubah data galeri
+// router.put(
+//     '/galeri/:id',
+//     upload.array('gambar', 3),
+//     (err, req, res, next) => {
+//         if (err instanceof multer.MulterError) {
+//             if (err.code === 'LIMIT_FILE_SIZE') {
+//             // return res.status(400).json({ error: 'File size is too large. Maximum allowed is 200 KB.' });
+//             req.flash('msgError', 'File gambar terlalu besar, maksimal 200kb');
+//             res.redirect(`/galeri/edit/${req.body.id}`);
+//             return
+//             }
+//             if (err.code === 'LIMIT_UNEXPECTED_FILE') {
+//                 // return res.status(400).json({ error: 'Maksimal gambar yang di pilih adalah 3!' });
+//                 req.flash('msgError', 'Maksimal gambar yang di pilih adalah 3!');
+//                 res.redirect(`/galeri/edit/${req.body.id}`);
+//                 return
+//             }
+//         }
+//         if (err) {
+//             // return res.status(400).json({ error: err.message });
+//             req.flash('msgError', `${err.message}`);
+//             res.redirect(`/galeri/edit/${req.body.id}`);
+//             return
+//         }
+//         next(); 
+//     },
+//     body('judul').notEmpty().withMessage('Judul tidak boleh kosong').isLength({ max: 50 }).withMessage('Judul tidak boleh lebih dari 50 karakter'),
+
+//     (req, res, next) => {
+//         const errors = validationResult(req);
+
+//         if (!errors.isEmpty()) {
+//             // meskipun ada error pada field selain file, tapi jika files dipilih, dia berhasil diupload, jadi harus di hapus
+//             if(req.files.length) {
+//                 req.files.map(item => (
+//                     fs.unlink('public/img/galeri/data/' + item.filename , async (err) => {
+//                         if(err) {
+//                             console.log(err)
+//                         } 
+//                     })
+//                 ))
+//             }
+            
+//             // return res.status(400).json({ errors: errors.array() });
+//             return res.render('edit-galeri', {
+//                 title: 'Form ubah data galeri',
+//                 layout: 'layouts/main-layout',
+//                 galeri,
+//                 errors: errors.array(),
+//                 msg: req.flash('msg'),
+//                 msgError: req.flash('msgError'),
+//             })
+//         }
+//         next(); 
+//     },
+//     async (req, res) => {
+//     // Setelah validasi berhasil, 
+//         if(req.files.length) {
+//             // jika ada file gambar baru, hapus gambar lama
+//             for(let i = 0; i < req.body.oldGambar.length; i++) {
+//                 fs.unlink('public/img/galeri/data/' + req.body.oldGambar[i] , async (err) => {
+//                     if(err) {
+//                         console.log(err)
+//                     } 
+//                 })
+//             }
+//         }
+//         const gambar = req.files.length ? req.files.map(gb => gb.filename) : req.body.oldGambar
+
+//         const galeri = {
+//             id: req.body.id,
+//             judul: req.body.judul,
+//             gambar,
+//         };
+//         const response = await updateGaleri(galeri)
+//         req.flash('msg', `${response.message}`);
+//         res.redirect(`/galeri/${req.body.id}`);
+//         return
+//         // return res.status(200).json({
+//         //     message: 'File dan data form berhasil diupload',
+//         //     galeri,
+//         //     msg: response.message
+//         // });
+//     }
+// );
+
 router.put(
     '/galeri/:id',
+    // upload.fields([{ name: 'gambar0', maxCount: 1 }, { name: 'gambar1', maxCount: 1 }, { name: 'gambar2', maxCount: 1 }]),
     upload.array('gambar', 3),
     (err, req, res, next) => {
         if (err instanceof multer.MulterError) {
@@ -176,15 +275,15 @@ router.put(
 
         if (!errors.isEmpty()) {
             // meskipun ada error pada field selain file, tapi jika files dipilih, dia berhasil diupload, jadi harus di hapus
-            if(req.files.length) {
-                req.files.map(item => (
-                    fs.unlink('public/img/galeri/data/' + item.filename , async (err) => {
-                        if(err) {
-                            console.log(err)
-                        } 
-                    })
-                ))
-            }
+            // if(req.files.length) {
+            //     req.files.map(item => (
+            //         fs.unlink('public/img/galeri/data/' + item.filename , async (err) => {
+            //             if(err) {
+            //                 console.log(err)
+            //             } 
+            //         })
+            //     ))
+            // }
             
             // return res.status(400).json({ errors: errors.array() });
             return res.render('edit-galeri', {
@@ -200,31 +299,68 @@ router.put(
     },
     async (req, res) => {
     // Setelah validasi berhasil, 
-        if(req.files.length) {
-            // jika ada file gambar baru, hapus gambar lama
-            for(let i = 0; i < req.body.oldGambar.length; i++) {
-                fs.unlink('public/img/galeri/data/' + req.body.oldGambar[i] , async (err) => {
-                    if(err) {
-                        console.log(err)
-                    } 
-                })
-            }
-        }
-        const gambar = req.files.length ? req.files.map(gb => gb.filename) : req.body.oldGambar
 
-        const galeri = {
-            id: req.body.id,
-            judul: req.body.judul,
-            gambar,
-        };
-        const response = await updateGaleri(galeri)
-        req.flash('msg', `${response.message}`);
-        res.redirect(`/galeri/${req.body.id}`);
-        return
+        // if(req.files.length) {
+        //     // jika ada file gambar baru, hapus gambar lama
+        //     for(let i = 0; i < req.body.oldGambar.length; i++) {
+        //         fs.unlink('public/img/galeri/data/' + req.body.oldGambar[i] , async (err) => {
+        //             if(err) {
+        //                 console.log(err)
+        //             } 
+        //         })
+        //     }
+        // }
+        // const gambar0 = req.file ? req.files.map(gb => gb.filename) : req.body.oldGambar
+
+
+        const gambar = []
+        if(req.body.checkbox0 == 'on' ) {
+            console.log(req.body.oldGambar0)
+            gambar.push(req.body.oldGambar0)
+        }
+        if(req.body.checkbox1 == 'on') {
+            console.log(req.body.oldGambar1)
+            gambar.push(req.body.oldGambar1)
+        }
+        if(req.body.checkbox2 == 'on') {
+            console.log(req.body.oldGambar2)
+            gambar.push(req.body.oldGambar2)
+        }
+
+        console.log(gambar)
+        const dataGambar = await loadGaleriById(req.body.id)
+        const filteredGambar = dataGambar.gambar.filter(gb => !gambar.includes(gb))
+        // const filteredGambar = [...new Set([...dataGambar.gambar, ...gambar])]
+        console.log('filteredGambar:', filteredGambar)
+
+        const uploadGb = req.files.map(gb => gb.filename)
+        const final = [...new Set([...filteredGambar, ...uploadGb])]
+        if (final.length > 3) {
+            return res.json({ message: 'total gambar tidak boleh lebih dari 3' })
+        }
+        if (!final.length) {
+            return res.json({ message: 'gambar tidak boleh kosong' })
+        }
+       else {
+           const galeri = {
+               id: req.body.id,
+               judul: req.body.judul,
+               gambar: final,
+           };
+           return res.status(200).json({
+            message: 'File dan data form berhasil diupload',
+            galeri,
+            // msg: response.message
+        });
+       }
+        // const response = await updateGaleri(galeri)
+        // req.flash('msg', `${response.message}`);
+        // res.redirect(`/galeri/${req.body.id}`);
+        // return
         // return res.status(200).json({
         //     message: 'File dan data form berhasil diupload',
         //     galeri,
-        //     msg: response.message
+        //     // msg: response.message
         // });
     }
 );
