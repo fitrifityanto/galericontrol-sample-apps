@@ -35,14 +35,21 @@
             </div>
             <div class="flex flex-col">
                 <div><p>Gambar</p></div>
-                <div class="w-52">
-                    <img src="/img/galeri/data/<%= galeri.gambar %>" alt="<%= galeri.gambar %>" class="aspect-square object-cover">
-                    <input type="hidden" class="border border-slate-500 p-1" name="oldGambar" value="<%= galeri.gambar %>"> 
+                <div>
+                    <div class="flex gap-2">
+                        <% for( let index = 0; index < galeri.gambar.length; index++ ) { %>
+                            <div>
+                                <a href="/img/galeri/data/<%= galeri.gambar[index] %>" target="_blank"><img src="/img/galeri/data/<%= galeri.gambar[index] %>" alt="" class="w-14"> </a>
+                                <input type="hidden" class="border border-slate-500 p-1" name="oldGambar" value="<%= galeri.gambar[index] %>"> 
+                            </div>
+                        <% } %>
+                    </div>
+
                 </div>
             </div>
             <div class="flex flex-col">
-                <label for="gambar">Ganti Gambar</label> 
-                <input type="file" id="gambar" name="gambar" accept="image/jpeg" >
+                <label for="gambar">Ganti Semua Gambar</label> 
+                <input type="file" id="gambar" name="gambar" accept="image/jpeg" multiple>
             </div>
             
             <button class="bg-blue-600 text-white py-1" type="submit">Update</button>
