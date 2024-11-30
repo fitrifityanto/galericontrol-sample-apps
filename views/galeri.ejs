@@ -29,7 +29,7 @@
             <thead>
                <tr class="bg-slate-200">
                     <th class="w-14 p-2 border border-slate-400"></th>
-                    <th class="p-2 border border-slate-400">gambar</th>
+                    <th class="p-2 border border-slate-400 w-[30%]">gambar</th>
                     <th class="p-2 border border-slate-400"> Judul</th>
                     <th colspan="2" class="p-2 w-[20%]"></th>
                </tr>
@@ -37,12 +37,18 @@
             <tbody>
 
                 <% galeries.forEach((galeri, i) => { i++   %>
+ 
                 <tr class="border border-slate-400">
                     <td class="border border-slate-400 text-center"><p class="text-lg"><%= i %></p></td>
                     <td class="border border-slate-400">
-                        <a href="/img/galeri/data/<%= galeri.gambar %>" target="_blank"><img src="/img/galeri/data/<%= galeri.gambar %>" alt="" class="w-14"> </a>
+                         <div class="flex gap-2">
+                             <% for( let index = 0; index < galeri.gambar.length; index++ ) { %>
+                                <a href="/img/galeri/data/<%= galeri.gambar[index] %>" target="_blank"><img src="/img/galeri/data/<%= galeri.gambar[index] %>" alt="" class="w-14"> </a>
+                                 <!-- <%= galeri.gambar[index] %> -->
+                             <% } %>
+                         </div>
                     </td>
-                    <!-- <td class="border border-slate-400"><p class="text-lg"><a href="img/galeri/<%= galeri.gambar %>"><%= galeri.gambar %></a> </p></td> -->
+
                     <td class="border border-slate-400"><p class="text-lg"><a href="/galeri/<%= galeri.id %>"><%= galeri.judul %></p></a></td>
                     <td class="text-center">
                         <a href="/galeri/edit/<%= galeri.id %>">Edit</a>

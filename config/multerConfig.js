@@ -39,7 +39,7 @@ const upload = multer({
     limits: {
         fileSize: 200 * 1024, // 200 KB dalam byte
         }
-    }).single('gambar')
+    })
 // ------
 
 export { upload }
