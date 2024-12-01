@@ -67,7 +67,7 @@ const deleteAllGaleri = async () => {
         const response =  await axios.delete(`${process.env.API_URL}`)
          return response.data
     } catch (error) {
-        console.error('Error fetching photos:', response.data.message) 
+        console.error('Error fetching photos:', error) 
         return []   
     }
 }
