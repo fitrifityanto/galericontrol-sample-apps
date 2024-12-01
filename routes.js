@@ -282,11 +282,13 @@ router.delete('/galeri', async (req, res) => {
     // menghapus 1 data berdasarkan id
 router.delete('/galeri/:id', async (req, res) => {
     const galeriById = await loadGaleriById(req.params.id)
-    fs.unlink('public/img/galeri/data/' + galeriById.gambar , (err) => {
-        if(err) {
-            console.log(err)
-        } 
-    })
+    for (let i=0; i<galeriById.gambar.length; i++) {
+        fs.unlink('public/img/galeri/data/' + galeriById.gambar[i] , (err) => {
+            if(err) {
+                console.log(err)
+            } 
+        })
+    }
     const response = await deleteGaleri(req.params.id)
     req.flash('msgSucces',` ${response.message}`)
     res.redirect('/galeri')
