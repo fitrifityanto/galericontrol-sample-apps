@@ -142,18 +142,6 @@ router.get('/galeri/edit/:id', async (req, res) => {
     })
 })
 
-router.get('/galeri/edit2/:id', async (req, res) => {
-    const galeri = await loadGaleriById(req.params.id)
-    // console.log(galeri)
-    res.render('edit2-galeri', {
-        title: 'Form Edit data galeri',
-        layout: 'layouts/main-layout',
-        galeri,
-        msg: req.flash('msg'),
-        msgError: req.flash('msgError'),
-    })
-})
-
 // Route untuk mengubah data galeri
 router.put(
     '/galeri/:id',
@@ -209,20 +197,20 @@ router.put(
         next(); 
     },
     async (req, res) => {
-    // Setelah validasi berhasil, 
+    // Setelah validasi (untuk req.body.judul dan tidak ada error pada multer) , 
         const gambarDelete = req.body.checkbox || []
         const dataGaleri = await loadGaleriById(req.body.id)
         const filteredGambar = dataGaleri.gambar.filter(gb => !gambarDelete.includes(gb))
         const uploadGb = req.files.map(gb => gb.filename)
-        const final = [...new Set([...filteredGambar, ...uploadGb])]
+        const gambar = [...new Set([...filteredGambar, ...uploadGb])] // ini adalah gambar2 yang dipilih oleh user
 
-        if (!final.length) {
+        if (!gambar.length) {
             // return res.json({ message: 'gambar tidak boleh kosong' })
             req.flash('msgError', 'gambar tidak boleh kosong');
             res.redirect(`/galeri/edit/${req.body.id}`);
             return
         }
-        if (final.length > 3) {
+        if (gambar.length > 3) {
             if(req.files.length) {
                 req.files.map(item => (
                     fs.unlink('public/img/galeri/data/' + item.filename , async (err) => {
@@ -250,7 +238,7 @@ router.put(
         const galeri = {
             id: req.body.id,
             judul: req.body.judul,
-            gambar: final,
+            gambar,
         };
         const response = await updateGaleri(galeri)
         req.flash('msg', `${response.message}`);

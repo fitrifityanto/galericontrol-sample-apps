@@ -27,34 +27,31 @@
         </div>
       <% } %>
     <div>
-        <form method="post" action="/galeri/<%= galeri.id %>?_method=PUT" enctype="multipart/form-data" class="py-5 flex flex-col gap-2">
+        <form method="post" action="/galeri/<%= galeri.id %>?_method=PUT" enctype="multipart/form-data" class="py-5 flex flex-col gap-3">
             <div class="flex flex-col">
                 <label for="judul">Judul</label> 
                 <input class="border border-slate-500 p-1" type="text" id="judul" name="judul" value="<%= galeri.judul %>">
                 <input type="hidden" name="id" value="<%= galeri.id %>">  
             </div>
-          
-                <div class="flex flex-col">
-                    <div><p>Gambar</p></div>
-                    <div>
-                        <div class="flex gap-2" >
-                            <% for( let index = 0; index < galeri.gambar.length; index++ ) { %>
-                                <div >
-                                    <input type="checkbox" name="checkbox[]" value="<%= galeri.gambar[index] %>" class="checkbox">
-                                    <a href="/img/galeri/data/<%= galeri.gambar[index] %>" target="_blank"><img src="/img/galeri/data/<%= galeri.gambar[index] %>" alt="" class="w-14"> </a>
-                                    <input type="hidden" class="border border-slate-500 p-1" name="oldGambar" value="<%= galeri.gambar[index] %>"> 
-                                    <!-- <input type="file" name="gambar<%= [index] %>" accept="image/jpeg" > -->
-                                </div>
-                            <% } %>
-                            <input type="file" name="gambar" accept="image/jpeg" multiple>
-                        </div>
+            <div class="flex flex-col">
+                <div><p>Gambar</p></div>
+                <div class="flex gap-2">
+                    <% for( let index = 0; index < galeri.gambar.length; index++ ) { %>
+                    <div class="flex flex-col gap-1 justify-center">
+                        <input type="hidden" class="border border-slate-500 p-1" name="oldGambar" value="<%= galeri.gambar[index] %>"> 
+                        <a href="/img/galeri/data/<%= galeri.gambar[index] %>" target="_blank">
+                            <img src="/img/galeri/data/<%= galeri.gambar[index] %>" alt="" class="w-14">
+                        </a>
+                        <input type="checkbox" name="checkbox[]" value="<%= galeri.gambar[index] %>" class="checkbox">
                     </div>
+                    <% } %>
                 </div>
-
-           
-            
+            </div>
+            <div class="flex flex-col">
+                <div><p>Ganti (atau tambah) gambar  </p></div>
+                <input type="file" name="gambar" accept="image/jpeg" multiple>
+            </div>         
             <button class="bg-blue-600 text-white py-1" type="submit">Update</button>
-            
         </form>
     </div>
 </div>
