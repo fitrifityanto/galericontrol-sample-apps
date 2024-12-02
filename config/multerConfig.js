@@ -6,7 +6,7 @@ import fs from 'fs';
 // ------ konfigurasi multer untuk upload file
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        const dirPath = 'public/img/galeri/data'
+        const dirPath = 'public/img/galeri'
         if (!fs.existsSync(dirPath)) {
             fs.mkdirSync(dirPath);
         }

@@ -82,13 +82,14 @@ router.post(
             // return res.status(400).json({ errors: errors.array() });
             // karena file berhasil upload, harus di hapus
             if(req.files.length) {
-               for(let i = 0; i < req.files.length; i++) {
-                   fs.unlink('public/img/galeri/data/' + req.files[i] , async (err) => {
-                       if(err) {
-                           console.log(err)
-                       } 
-                   })
-               }
+                req.files.map(item => (
+                    fs.unlink('public/img/galeri/'+ item.filename , async (err) => {
+                       
+                        if(err) {
+                            console.log(err)
+                        } 
+                    })
+                ))
             }
         
             return res.render('add-galeri', {
@@ -176,7 +177,7 @@ router.put(
             // meskipun ada error pada field selain file, tapi jika files dipilih, dia berhasil diupload, jadi harus di hapus
             if(req.files.length) {
                 req.files.map(item => (
-                    fs.unlink('public/img/galeri/data/' + item.filename , async (err) => {
+                    fs.unlink('public/img/galeri/' + item.filename , async (err) => {
                         if(err) {
                             console.log(err)
                         } 
@@ -213,7 +214,7 @@ router.put(
         if (gambar.length > 3) {
             if(req.files.length) {
                 req.files.map(item => (
-                    fs.unlink('public/img/galeri/data/' + item.filename , async (err) => {
+                    fs.unlink('public/img/galeri/' + item.filename , async (err) => {
                         if(err) {
                             console.log(err)
                         } 
@@ -227,7 +228,7 @@ router.put(
         }
         if(gambarDelete.length) {
             for(let i=0; i<gambarDelete.length; i++) {
-                fs.unlink('public/img/galeri/data/' + gambarDelete[i] , async (err) => {
+                fs.unlink('public/img/galeri/' + gambarDelete[i] , async (err) => {
                     if(err) {
                     console.log(err)
                     } 
@@ -271,7 +272,7 @@ router.delete('/galeri', async (req, res) => {
 router.delete('/galeri/:id', async (req, res) => {
     const galeriById = await loadGaleriById(req.params.id)
     for (let i=0; i<galeriById.gambar.length; i++) {
-        fs.unlink('public/img/galeri/data/' + galeriById.gambar[i] , (err) => {
+        fs.unlink('public/img/galeri/' + galeriById.gambar[i] , (err) => {
             if(err) {
                 console.log(err)
             } 

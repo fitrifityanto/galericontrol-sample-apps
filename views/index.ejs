@@ -14,7 +14,7 @@
         <div class="grid grid-cols-3 gap-2 mb-4">
             <% galeries.forEach(galeri => {   %>
             <div >
-                <div class="border border-slate-500 p-2"><a href="/galeri/<%= galeri.id %>"> <img src="/img/galeri/data/<%= galeri.gambar[0] %>" alt="<%= galeri.gambar[0] %>" class="w-full aspect-square object-cover"></a></div>
+                <div class="border border-slate-500 p-2"><a href="/galeri/<%= galeri.id %>"> <img src="/img/galeri/<%= galeri.gambar[0] %>" alt="<%= galeri.gambar[0] %>" class="w-full aspect-square object-cover"></a></div>
             </div>
             <% })  %>
         </div>

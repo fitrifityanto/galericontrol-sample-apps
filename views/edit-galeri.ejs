@@ -39,8 +39,8 @@
                     <% for( let index = 0; index < galeri.gambar.length; index++ ) { %>
                     <div class="flex flex-col gap-1 justify-center">
                         <input type="hidden" class="border border-slate-500 p-1" name="oldGambar" value="<%= galeri.gambar[index] %>"> 
-                        <a href="/img/galeri/data/<%= galeri.gambar[index] %>" target="_blank">
-                            <img src="/img/galeri/data/<%= galeri.gambar[index] %>" alt="" class="w-14">
+                        <a href="/img/galeri/<%= galeri.gambar[index] %>" target="_blank">
+                            <img src="/img/galeri/<%= galeri.gambar[index] %>" alt="" class="w-14">
                         </a>
                         <input type="checkbox" name="checkbox[]" value="<%= galeri.gambar[index] %>" class="checkbox">
                     </div>

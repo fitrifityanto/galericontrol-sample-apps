@@ -12,9 +12,9 @@
         <h2 class="text-2xl"><%= galeri.judul %></h2>
         <div class="flex gap-2">
             <% for( let index = 0; index < galeri.gambar.length; index++ ) { %>
-               <a href="/img/galeri/data/<%= galeri.gambar[index] %>" target="_blank">
+               <a href="/img/galeri/<%= galeri.gambar[index] %>" target="_blank">
                     <div class="w-52">
-                        <img src="/img/galeri/data/<%= galeri.gambar[index] %>" alt="<%= galeri.gambar[index] %>" class="w-full object-cover aspect-square">
+                        <img src="/img/galeri/<%= galeri.gambar[index] %>" alt="<%= galeri.gambar[index] %>" class="w-full object-cover aspect-square">
                     </div>
                 </a>
                 <!-- <%= galeri.gambar[index] %> -->
