@@ -7,7 +7,7 @@ import { router as routes } from './routes.js'
 import methodOverride from 'method-override';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import fs from 'fs';
+
 
 dotenv.config();
 
@@ -49,5 +49,5 @@ app.use('/', (req, res) => {
 })
 
 app.listen(PORT, () => {
-  console.log(`Example app listening on http://localhost:${PORT}`)
+  console.log(`aplikasi ini berjalan di http://localhost:${PORT}`)
 })

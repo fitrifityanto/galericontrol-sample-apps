@@ -7,7 +7,7 @@ const loadGaleri = async () => {
         const response =  await axios.get(`${process.env.API_URL}`)
          return response.data
     } catch (error) {
-        console.error('Error fetching photos:', response.data.message) 
+        console.error('Error fetching data galeri:', error) 
         return []   
     }
 }
@@ -17,7 +17,7 @@ const loadGaleriById = async (id) => {
         const response =  await axios.get(`${process.env.API_URL}/${id}`)
          return response.data
     } catch (error) {
-        console.error('Error fetching photos:', error) 
+        console.error('Error fetching data galeri:', error) 
         return []   
     }
 }
@@ -31,7 +31,7 @@ const addGaleri = async (galeri) => {
         return response.data
        
     } catch (error) {
-        console.error('Error fetching photos:', error) 
+        console.error('Error fetching data galeri:', error) 
         return []   
     }
 }
@@ -46,7 +46,7 @@ const updateGaleri = async (galeri) => {
         return response.data
        
     } catch (error) {
-        console.error('Error fetching photos:', error) 
+        console.error('Error fetching data galeri:', error) 
         return []   
     }
 }
@@ -56,7 +56,7 @@ const deleteGaleri = async (id) => {
         const response =  await axios.delete(`${process.env.API_URL}/${id}`)
          return response.data
     } catch (error) {
-        console.error('Error fetching photos:', error) 
+        console.error('Error fetching data galeri:', error) 
         return []   
     }
 }
