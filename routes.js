@@ -211,8 +211,9 @@ router.put(
             res.redirect(`/galeri/edit/${req.body.id}`);
             return
         }
-        if (gambar.length > 3) {
-            if(req.files.length) {
+        // cek gambar yang akan tersimpan tidak boleh lebih dari 3
+        if (gambar.length > 3) { 
+            if(req.files.length) { // selama pengecekan, file berhasip ter-upload, maka harus di hapus
                 req.files.map(item => (
                     fs.unlink('public/img/galeri/' + item.filename , async (err) => {
                         if(err) {
@@ -228,11 +229,13 @@ router.put(
         }
         if(gambarDelete.length) {
             for(let i=0; i<gambarDelete.length; i++) {
-                fs.unlink('public/img/galeri/' + gambarDelete[i] , async (err) => {
-                    if(err) {
-                    console.log(err)
-                    } 
-                })
+                if(fs.existsSync('public/img/galeri/' + gambarDelete[i])) {
+                    fs.unlink('public/img/galeri/' + gambarDelete[i] , async (err) => {
+                        if(err) {
+                        console.log(err)
+                        } 
+                    })
+                }
             }
         }
 
@@ -261,7 +264,7 @@ router.get('/galeri/:id', async (req, res) => {
     // menghapus semua data galeri
 router.delete('/galeri', async (req, res) => {
     const response = await deleteAllGaleri()
-    fs.rm('public/img/galeri/data', { recursive: true, force: true },  err => {
+    fs.rm('public/img/galeri', { recursive: true, force: true },  err => {
         if(err) console.log(err)
     })
     req.flash('msgSucces',` ${response.message}`)   
@@ -270,13 +273,16 @@ router.delete('/galeri', async (req, res) => {
 
     // menghapus 1 data berdasarkan id
 router.delete('/galeri/:id', async (req, res) => {
+    // hapus gambar dari folder publc
     const galeriById = await loadGaleriById(req.params.id)
     for (let i=0; i<galeriById.gambar.length; i++) {
-        fs.unlink('public/img/galeri/' + galeriById.gambar[i] , (err) => {
-            if(err) {
-                console.log(err)
-            } 
-        })
+        if(fs.existsSync('public/img/galeri/' + galeriById.gambar[i])) { // cek apakah ada file gambar nya
+            fs.unlink('public/img/galeri/' + galeriById.gambar[i] , (err) => {
+                if(err) {
+                    console.log(err)
+                } 
+            })
+        }
     }
     const response = await deleteGaleri(req.params.id)
     req.flash('msgSucces',` ${response.message}`)
